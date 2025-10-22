@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+
 use App\Http\Controllers\Controller;
 use App\Models\Election;
 use App\Models\Party;
@@ -11,10 +13,10 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:admin']);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware(['auth', 'role:admin']);
+    // }
 
     public function index()
     {

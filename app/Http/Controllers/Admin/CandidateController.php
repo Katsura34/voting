@@ -13,10 +13,10 @@ use Illuminate\Validation\Rule;
 
 class CandidateController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:admin']);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware(['auth', 'role:admin']);
+    // }
 
     public function index(Election $election)
     {

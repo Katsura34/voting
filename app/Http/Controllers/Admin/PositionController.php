@@ -10,10 +10,10 @@ use Illuminate\Validation\Rule;
 
 class PositionController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:admin']);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware(['auth', 'role:admin']);
+    // }
 
     public function index(Election $election)
     {

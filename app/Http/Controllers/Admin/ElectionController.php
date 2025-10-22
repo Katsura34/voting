@@ -11,10 +11,10 @@ use Carbon\Carbon;
 
 class ElectionController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:admin']);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware(['auth', 'role:admin']);
+    // }
 
     public function index()
     {
