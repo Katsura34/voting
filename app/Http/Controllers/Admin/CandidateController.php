@@ -29,7 +29,7 @@ class CandidateController extends Controller
         
         $elections = Election::with('positions')->orderBy('created_at', 'desc')->get();
         
-        return view('admin.candidates.index', compact('candidates', 'elections'));
+        return view('admin.candidates.global-index', compact('candidates', 'elections'));
     }
 
     /**
@@ -40,10 +40,9 @@ class CandidateController extends Controller
         $candidates = $election->candidates()
             ->with(['position', 'party'])
             ->orderBy('position_id')
-            ->get()
-            ->groupBy('position.name');
+            ->get();
         
-        return view('admin.candidates.election-index', compact('election', 'candidates'));
+        return view('admin.candidates.index', compact('election', 'candidates'));
     }
 
     public function create(Election $election)
