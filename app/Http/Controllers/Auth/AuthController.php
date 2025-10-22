@@ -11,9 +11,6 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    // Remove constructor-level middleware to avoid 'undefined method' until environment is stable.
-    // Route-level middleware (guest/auth) remains enforced in routes/web.php.
-
     public function showLoginForm()
     {
         return view('auth.login');
@@ -51,6 +48,7 @@ class AuthController extends Controller
             'last_name' => 'required|string|max:255',
             'usn' => 'required|string|max:255|unique:users',
             'password' => ['required', 'confirmed', Password::defaults()],
+            'role' => 'nullable|in:admin,student'
         ]);
 
         $user = User::create([
@@ -58,12 +56,14 @@ class AuthController extends Controller
             'last_name' => $validated['last_name'],
             'usn' => $validated['usn'],
             'password' => Hash::make($validated['password']),
-            'role' => 'student',
+            'role' => $validated['role'] ?? 'student',
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('student.dashboard');
+        return redirect()->intended(
+            $user->role === 'admin' ? route('admin.dashboard') : route('student.dashboard')
+        );
     }
 
     public function logout(Request $request)
