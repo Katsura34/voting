@@ -42,7 +42,7 @@
                 <p class="text-muted mb-0">Manage voting positions for this election</p>
             </div>
             <div>
-                <a href="{{ route('admin.elections.elections.candidates.index', $election) }}" class="btn btn-outline-success me-2">
+                <a href="{{ route('admin.elections.candidates.index', $election) }}" class="btn btn-outline-success me-2">
                     <i class="bi bi-person-badge me-1"></i>View Candidates
                 </a>
                 @if($election->status === 'pending')
