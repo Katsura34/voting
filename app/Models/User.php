@@ -2,47 +2,76 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'name',
-        'email',
+        'first_name',
+        'last_name', 
+        'usn',
         'password',
+        'role'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            'usn_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Relationships
+    public function votes()
+    {
+        return $this->hasMany(Vote::class);
+    }
+
+    // Accessors
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    // Scopes
+    public function scopeStudents($query)
+    {
+        return $query->where('role', 'student');
+    }
+
+    public function scopeAdmins($query)
+    {
+        return $query->where('role', 'admin');
+    }
+
+    // Check if user has voted for a specific election
+    public function hasVotedFor($electionId, $positionId = null)
+    {
+        $query = $this->votes()->where('election_id', $electionId);
+        
+        if ($positionId) {
+            $query->where('position_id', $positionId);
+        }
+        
+        return $query->exists();
+    }
+
+    // Get user's votes for an election
+    public function getVotesForElection($electionId)
+    {
+        return $this->votes()
+            ->where('election_id', $electionId)
+            ->with(['position', 'candidate'])
+            ->get();
     }
 }
