@@ -42,11 +42,11 @@
                 <p class="text-muted mb-0">Manage candidates for this election</p>
             </div>
             <div>
-                <a href="{{ route('admin.elections.elections.positions.index', $election) }}" class="btn btn-outline-primary me-2">
+                <a href="{{ route('admin.elections.positions.index', $election) }}" class="btn btn-outline-primary me-2">
                     <i class="bi bi-people me-2"></i>View Positions
                 </a>
                 @if($election->status === 'pending')
-                    <a href="{{ route('admin.elections.elections.candidates.create', $election) }}" class="btn btn-success">
+                    <a href="{{ route('admin.elections.candidates.create', $election) }}" class="btn btn-success">
                         <i class="bi bi-plus-circle me-2"></i>Add Candidate
                     </a>
                 @endif
@@ -154,11 +154,11 @@
                                         @if($election->status === 'pending')
                                         <div class="card-footer bg-white border-0">
                                             <div class="d-flex gap-2">
-                                                <a href="{{ route('admin.elections.elections.candidates.show', [$election, $candidate]) }}" 
+                                                <a href="{{ route('admin.elections.candidates.show', [$election, $candidate]) }}" 
                                                    class="btn btn-outline-info btn-sm flex-fill">
                                                     <i class="bi bi-eye me-1"></i>View
                                                 </a>
-                                                <a href="{{ route('admin.elections.elections.candidates.edit', [$election, $candidate]) }}" 
+                                                <a href="{{ route('admin.elections.candidates.edit', [$election, $candidate]) }}" 
                                                    class="btn btn-outline-primary btn-sm flex-fill">
                                                     <i class="bi bi-pencil me-1"></i>Edit
                                                 </a>
@@ -172,7 +172,7 @@
                                         @else
                                         <div class="card-footer bg-white border-0">
                                             <div class="d-flex gap-2">
-                                                <a href="{{ route('admin.elections.elections.candidates.show', [$election, $candidate]) }}" 
+                                                <a href="{{ route('admin.elections.candidates.show', [$election, $candidate]) }}" 
                                                    class="btn btn-outline-info btn-sm w-100">
                                                     <i class="bi bi-eye me-1"></i>View Details
                                                 </a>
@@ -187,7 +187,7 @@
                             <!-- Add Candidate Button for Position -->
                             @if($election->status === 'pending' && $positionCandidates->count() < 2)
                                 <div class="text-center mt-4">
-                                    <a href="{{ route('admin.elections.elections.candidates.create', $election) }}?position={{ $position->id }}" 
+                                    <a href="{{ route('admin.elections.candidates.create', $election) }}?position={{ $position->id }}" 
                                        class="btn btn-outline-success">
                                         <i class="bi bi-plus-circle me-2"></i>Add Candidate for {{ $position->name }}
                                     </a>
@@ -199,7 +199,7 @@
                                 <i class="bi bi-person-plus text-muted" style="font-size: 3rem;"></i>
                                 <h6 class="text-muted mt-2">No candidates for {{ $position->name }}</h6>
                                 @if($election->status === 'pending')
-                                    <a href="{{ route('admin.elections.elections.candidates.create', $election) }}?position={{ $position->id }}" 
+                                    <a href="{{ route('admin.elections.candidates.create', $election) }}?position={{ $position->id }}" 
                                        class="btn btn-success mt-2">
                                         <i class="bi bi-plus-circle me-2"></i>Add First Candidate
                                     </a>
@@ -255,7 +255,7 @@
                 <h4 class="text-muted mb-2">No Candidates Registered</h4>
                 <p class="text-muted mb-4">Start by adding candidates to the election positions.</p>
                 @if($election->status === 'pending')
-                    <a href="{{ route('admin.elections.elections.candidates.create', $election) }}" class="btn btn-success">
+                    <a href="{{ route('admin.elections.candidates.create', $election) }}" class="btn btn-success">
                         <i class="bi bi-plus-circle me-2"></i>Add Your First Candidate
                     </a>
                 @endif
@@ -265,7 +265,7 @@
         <!-- Hidden Delete Forms -->
         @foreach($candidates as $candidate)
             <form method="POST" 
-                  action="{{ route('admin.elections.elections.candidates.destroy', [$election, $candidate]) }}" 
+                  action="{{ route('admin.elections.candidates.destroy', [$election, $candidate]) }}" 
                   id="deleteForm{{ $candidate->id }}" 
                   style="display: none;">
                 @csrf
