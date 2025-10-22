@@ -81,18 +81,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('elections/{election}/positions/{position}', [PositionController::class, 'update'])->name('elections.positions.update');
     Route::delete('elections/{election}/positions/{position}', [PositionController::class, 'destroy'])->name('elections.positions.destroy');
     
-    // Global Candidates Management
-    Route::resource('candidates', CandidateController::class, ['except' => ['create', 'store']])->names([
-        'index' => 'candidates.index',
-        'show' => 'candidates.show',
-        'edit' => 'candidates.edit',
-        'update' => 'candidates.update',
-        'destroy' => 'candidates.destroy'
-    ]);
-    Route::get('candidates/create', [CandidateController::class, 'globalCreate'])->name('candidates.create');
-    Route::post('candidates', [CandidateController::class, 'globalStore'])->name('candidates.store');
-    
-    // Candidate Management (nested under elections) - keeping for backward compatibility
+    // Candidate Management (nested under elections only - removed global routes)
     Route::get('elections/{election}/candidates', [CandidateController::class, 'index'])->name('elections.candidates.index');
     Route::get('elections/{election}/candidates/create', [CandidateController::class, 'create'])->name('elections.candidates.create');
     Route::post('elections/{election}/candidates', [CandidateController::class, 'store'])->name('elections.candidates.store');
