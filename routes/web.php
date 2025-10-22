@@ -72,6 +72,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('elections/{election}/close', [ElectionController::class, 'close'])->name('elections.close');
     Route::get('elections/{election}/results', [ElectionController::class, 'results'])->name('elections.results');
     
+    // Global Candidates Management (for navbar link)
+    Route::get('/candidates', [CandidateController::class, 'globalIndex'])->name('candidates.index');
+    
     // Position Management (properly nested under elections)
     Route::prefix('elections/{election}')->name('elections.')->group(function () {
         Route::resource('positions', PositionController::class)->except(['index']);
