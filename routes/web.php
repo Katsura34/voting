@@ -72,23 +72,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('elections/{election}/close', [ElectionController::class, 'close'])->name('elections.close');
     Route::get('elections/{election}/results', [ElectionController::class, 'results'])->name('elections.results');
     
-    // Position Management (nested under elections)
-    Route::get('elections/{election}/positions', [PositionController::class, 'index'])->name('elections.positions.index');
-    Route::get('elections/{election}/positions/create', [PositionController::class, 'create'])->name('elections.positions.create');
-    Route::post('elections/{election}/positions', [PositionController::class, 'store'])->name('elections.positions.store');
-    Route::get('elections/{election}/positions/{position}', [PositionController::class, 'show'])->name('elections.positions.show');
-    Route::get('elections/{election}/positions/{position}/edit', [PositionController::class, 'edit'])->name('elections.positions.edit');
-    Route::put('elections/{election}/positions/{position}', [PositionController::class, 'update'])->name('elections.positions.update');
-    Route::delete('elections/{election}/positions/{position}', [PositionController::class, 'destroy'])->name('elections.positions.destroy');
-    
-    // Candidate Management (nested under elections only - removed global routes)
-    Route::get('elections/{election}/candidates', [CandidateController::class, 'index'])->name('elections.candidates.index');
-    Route::get('elections/{election}/candidates/create', [CandidateController::class, 'create'])->name('elections.candidates.create');
-    Route::post('elections/{election}/candidates', [CandidateController::class, 'store'])->name('elections.candidates.store');
-    Route::get('elections/{election}/candidates/{candidate}', [CandidateController::class, 'show'])->name('elections.candidates.show');
-    Route::get('elections/{election}/candidates/{candidate}/edit', [CandidateController::class, 'edit'])->name('elections.candidates.edit');
-    Route::put('elections/{election}/candidates/{candidate}', [CandidateController::class, 'update'])->name('elections.candidates.update');
-    Route::delete('elections/{election}/candidates/{candidate}', [CandidateController::class, 'destroy'])->name('elections.candidates.destroy');
+    // Position Management (properly nested under elections)
+    Route::prefix('elections/{election}')->name('elections.')->group(function () {
+        Route::resource('positions', PositionController::class)->except(['index']);
+        Route::get('positions', [PositionController::class, 'index'])->name('positions.index');
+        
+        // Candidate Management (properly nested under elections)
+        Route::resource('candidates', CandidateController::class)->except(['index']);
+        Route::get('candidates', [CandidateController::class, 'index'])->name('candidates.index');
+    });
 });
 
 // Student Routes
