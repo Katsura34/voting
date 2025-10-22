@@ -11,11 +11,8 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('guest')->only(['showLoginForm', 'login', 'showRegistrationForm', 'register']);
-        $this->middleware('auth')->only(['logout']);
-    }
+    // Remove constructor-level middleware to avoid 'undefined method' until environment is stable.
+    // Route-level middleware (guest/auth) remains enforced in routes/web.php.
 
     public function showLoginForm()
     {
