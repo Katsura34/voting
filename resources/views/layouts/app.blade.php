@@ -53,7 +53,7 @@
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.dashboard')?'active':'' }}" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.parties.*')?'active':'' }}" href="{{ route('admin.parties.index') }}">Parties</a></li>
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.elections.*')?'active':'' }}" href="{{ route('admin.elections.index') }}">Elections</a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.candidates.*')?'active':'' }}" href="{{ route('admin.candidates.index') }}">Candidates</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.elections.candidates.*')?'active':'' }}" href="{{ route('admin.elections.index') }}">Candidates</a></li>
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.analytics')?'active':'' }}" href="{{ route('admin.analytics') }}">Analytics</a></li>
                         @else
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('student.dashboard')?'active':'' }}" href="{{ route('student.dashboard') }}">Dashboard</a></li>
