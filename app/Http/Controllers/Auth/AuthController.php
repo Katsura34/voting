@@ -11,6 +11,12 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('guest')->only(['showLoginForm', 'login', 'showRegistrationForm', 'register']);
+        $this->middleware('auth')->only(['logout']);
+    }
+
     public function showLoginForm()
     {
         return view('auth.login');
@@ -26,12 +32,9 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            // Redirect based on user role
-            if (Auth::user()->role === 'admin') {
-                return redirect()->intended(route('admin.dashboard'));
-            }
-
-            return redirect()->intended(route('student.dashboard'));
+            return redirect()->intended(
+                Auth::user()->role === 'admin' ? route('admin.dashboard') : route('student.dashboard')
+            );
         }
 
         return back()->withErrors([
@@ -58,7 +61,7 @@ class AuthController extends Controller
             'last_name' => $validated['last_name'],
             'usn' => $validated['usn'],
             'password' => Hash::make($validated['password']),
-            'role' => 'student', // Auto-assign student role
+            'role' => 'student',
         ]);
 
         Auth::login($user);
