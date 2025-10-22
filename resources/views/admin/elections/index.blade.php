@@ -44,10 +44,12 @@
                         <div><strong>End:</strong> {{ $election->end_date->format('M d, Y H:i') }}</div>
                     </div>
                 </div>
-                <div class="card-footer d-flex gap-2">
+                <div class="card-footer d-flex flex-wrap gap-2">
                     <a href="{{ route('admin.elections.show', $election) }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i></a>
+                    <a href="{{ route('admin.elections.candidates.index', $election) }}" class="btn btn-outline-info btn-sm"><i class="bi bi-people me-1"></i> Candidates</a>
                     @if($election->status === 'draft')
-                        <a href="{{ route('admin.elections.edit', $election) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></a>
+                        <a href="{{ route('admin.elections.candidates.create', $election) }}" class="btn btn-primary btn-sm"><i class="bi bi-person-plus me-1"></i> Add</a>
+                        <a href="{{ route('admin.elections.positions.create', $election) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-square me-1"></i> Position</a>
                         <form action="{{ route('admin.elections.activate', $election) }}" method="POST" class="ms-auto" onsubmit="return confirm('Activate this election? This will close other active elections.')">
                             @csrf
                             <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-play-fill me-1"></i>Activate</button>

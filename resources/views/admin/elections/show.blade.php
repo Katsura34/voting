@@ -7,7 +7,9 @@
   <h1 class="h3"><i class="bi bi-list-check me-2"></i>{{ $election->name }}</h1>
   <div class="btn-group">
     @if($election->status==='draft')
-      <form action="{{ route('admin.elections.activate', $election) }}" method="POST" onsubmit="return confirm('Activate election?')">@csrf<button class="btn btn-success btn-sm"><i class="bi bi-play-fill"></i> Activate</button></form>
+      <a href="{{ route('admin.elections.candidates.create', $election) }}" class="btn btn-primary btn-sm"><i class="bi bi-person-plus me-1"></i>Add Candidate</a>
+      <a href="{{ route('admin.elections.positions.create', $election) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-square me-1"></i>Add Position</a>
+      <form action="{{ route('admin.elections.activate', $election) }}" method="POST" class="ms-2" onsubmit="return confirm('Activate election?')">@csrf<button class="btn btn-success btn-sm"><i class="bi bi-play-fill"></i> Activate</button></form>
     @elseif($election->status==='active')
       <form action="{{ route('admin.elections.close', $election) }}" method="POST" onsubmit="return confirm('Close election and declare winners?')">@csrf<button class="btn btn-danger btn-sm"><i class="bi bi-stop-fill"></i> Close</button></form>
     @endif
@@ -36,12 +38,28 @@
                 <strong>{{ $position->name }}</strong>
                 @if($position->description)<div class="text-muted small">{{ $position->description }}</div>@endif
               </div>
-              <div class="small text-muted">Candidates: {{ $position->candidates()->count() }}</div>
+              <div class="text-end small text-muted">Candidates: {{ $position->candidates()->count() }}</div>
             </div>
           </div>
         @empty
           <p class="text-muted mb-0">No positions yet.</p>
         @endforelse
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="fw-semibold">Candidates</span>
+        @if($election->status==='draft')
+          <a href="{{ route('admin.elections.candidates.create', $election) }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-person-plus me-1"></i> Add Candidate
+          </a>
+        @endif
+      </div>
+      <div class="card-body">
+        <a href="{{ route('admin.elections.candidates.index', $election) }}" class="btn btn-outline-info">
+          <i class="bi bi-people me-1"></i> View All Candidates
+        </a>
       </div>
     </div>
   </div>
