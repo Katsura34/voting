@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class VotingController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:student']);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware(['auth', 'role:student']);
+    // }
 
     public function index()
     {
