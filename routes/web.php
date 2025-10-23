@@ -1,14 +1,6 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\PartyController;
-use App\Http\Controllers\Admin\ElectionController;
-use App\Http\Controllers\Admin\PositionController;
-use App\Http\Controllers\Admin\CandidateController;
-use App\Http\Controllers\Admin\SettingsController;
-use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
-use App\Http\Controllers\Student\VotingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,20 +53,47 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/', function () {
         return redirect()->route('admin.dashboard');
     });
+    
     Route::get('/dashboard', function() {
-        return view('admin.dashboard');
+        // Sample data for dashboard
+        $data = [
+            'totalElections' => 0,
+            'activeElections' => 0,
+            'totalCandidates' => 0,
+            'totalVotes' => 0,
+            'totalParties' => 0,
+            'pendingElections' => 0,
+            'completedElections' => 0,
+            'participationRate' => 0,
+            'recentElections' => collect(),
+            'recentActivity' => []
+        ];
+        return view('admin.dashboard', $data);
     })->name('dashboard');
     
+    // Analytics/Results & Analytics Routes
     Route::get('/analytics', function() {
         return view('admin.analytics');
     })->name('analytics');
+    
+    Route::get('/results/live', function() {
+        return response()->view('admin.results.live', ['message' => 'Live vote counts coming soon']);
+    })->name('results.live');
+    
+    Route::get('/results/history', function() {
+        return response()->view('admin.results.history', ['message' => 'Election history coming soon']);
+    })->name('results.history');
+    
+    Route::get('/results/winners', function() {
+        return response()->view('admin.results.winners', ['message' => 'Winner reports coming soon']);
+    })->name('results.winners');
     
     // Settings
     Route::get('/settings', function() {
         return view('admin.settings');
     })->name('settings');
     
-    // Party Management
+    // Party Management Routes
     Route::get('/parties', function() {
         $parties = collect(); // Empty collection for now
         return view('admin.parties.index', compact('parties'));
@@ -106,7 +125,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         return redirect()->route('admin.parties.index')->with('success', 'Party deleted successfully!');
     })->name('parties.destroy');
     
-    // Election Management
+    // Election Management Routes
     Route::get('/elections', function() {
         $elections = collect(); // Empty collection for now
         return view('admin.elections.index', compact('elections'));
@@ -150,91 +169,81 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         return view('admin.elections.results', ['election' => (object) ['id' => $election, 'name' => 'Sample Election']]);
     })->name('elections.results');
     
-    // Global Candidates Management (for navbar link)
+    // Positions Management Routes (Top Level)
+    Route::get('/positions', function() {
+        $positions = collect();
+        $elections = collect();
+        return view('admin.positions.index', compact('positions', 'elections'));
+    })->name('positions.index');
+    
+    Route::get('/positions/create', function() {
+        $elections = collect();
+        return view('admin.positions.create', compact('elections'));
+    })->name('positions.create');
+    
+    Route::post('/positions', function() {
+        return redirect()->route('admin.positions.index')->with('success', 'Position created successfully!');
+    })->name('positions.store');
+    
+    Route::get('/positions/{position}', function($position) {
+        $position = (object) ['id' => $position, 'name' => 'Sample Position'];
+        return view('admin.positions.show', compact('position'));
+    })->name('positions.show');
+    
+    Route::get('/positions/{position}/edit', function($position) {
+        $position = (object) ['id' => $position, 'name' => 'Sample Position'];
+        $elections = collect();
+        return view('admin.positions.edit', compact('position', 'elections'));
+    })->name('positions.edit');
+    
+    Route::put('/positions/{position}', function($position) {
+        return redirect()->route('admin.positions.index')->with('success', 'Position updated successfully!');
+    })->name('positions.update');
+    
+    Route::delete('/positions/{position}', function($position) {
+        return redirect()->route('admin.positions.index')->with('success', 'Position deleted successfully!');
+    })->name('positions.destroy');
+    
+    // Candidates Management Routes (Top Level)
     Route::get('/candidates', function() {
-        $candidates = collect(); // Empty collection for now
-        return view('admin.candidates.index', compact('candidates'));
+        $candidates = collect();
+        $elections = collect();
+        $positions = collect();
+        $parties = collect();
+        return view('admin.candidates.index', compact('candidates', 'elections', 'positions', 'parties'));
     })->name('candidates.index');
     
-    // Position Management (properly nested under elections)
-    Route::prefix('elections/{election}')->name('elections.')->group(function () {
-        Route::get('/positions', function($election) {
-            $election = (object) ['id' => $election, 'name' => 'Sample Election'];
-            $positions = collect();
-            return view('admin.positions.index', compact('election', 'positions'));
-        })->name('positions.index');
-        
-        Route::get('/positions/create', function($election) {
-            $election = (object) ['id' => $election, 'name' => 'Sample Election'];
-            return view('admin.positions.create', compact('election'));
-        })->name('positions.create');
-        
-        Route::post('/positions', function($election) {
-            return redirect()->route('admin.elections.positions.index', $election)->with('success', 'Position created successfully!');
-        })->name('positions.store');
-        
-        Route::get('/positions/{position}', function($election, $position) {
-            $election = (object) ['id' => $election, 'name' => 'Sample Election'];
-            $position = (object) ['id' => $position, 'name' => 'Sample Position'];
-            return view('admin.positions.show', compact('election', 'position'));
-        })->name('positions.show');
-        
-        Route::get('/positions/{position}/edit', function($election, $position) {
-            $election = (object) ['id' => $election, 'name' => 'Sample Election'];
-            $position = (object) ['id' => $position, 'name' => 'Sample Position'];
-            return view('admin.positions.edit', compact('election', 'position'));
-        })->name('positions.edit');
-        
-        Route::put('/positions/{position}', function($election, $position) {
-            return redirect()->route('admin.elections.positions.index', $election)->with('success', 'Position updated successfully!');
-        })->name('positions.update');
-        
-        Route::delete('/positions/{position}', function($election, $position) {
-            return redirect()->route('admin.elections.positions.index', $election)->with('success', 'Position deleted successfully!');
-        })->name('positions.destroy');
-        
-        // Candidate Management (properly nested under elections)
-        Route::get('/candidates', function($election) {
-            $election = (object) ['id' => $election, 'name' => 'Sample Election'];
-            $candidates = collect();
-            $positions = collect();
-            $parties = collect();
-            return view('admin.candidates.index', compact('election', 'candidates', 'positions', 'parties'));
-        })->name('candidates.index');
-        
-        Route::get('/candidates/create', function($election) {
-            $election = (object) ['id' => $election, 'name' => 'Sample Election'];
-            $positions = collect();
-            $parties = collect();
-            return view('admin.candidates.create', compact('election', 'positions', 'parties'));
-        })->name('candidates.create');
-        
-        Route::post('/candidates', function($election) {
-            return redirect()->route('admin.elections.candidates.index', $election)->with('success', 'Candidate added successfully!');
-        })->name('candidates.store');
-        
-        Route::get('/candidates/{candidate}', function($election, $candidate) {
-            $election = (object) ['id' => $election, 'name' => 'Sample Election'];
-            $candidate = (object) ['id' => $candidate, 'name' => 'Sample Candidate'];
-            return view('admin.candidates.show', compact('election', 'candidate'));
-        })->name('candidates.show');
-        
-        Route::get('/candidates/{candidate}/edit', function($election, $candidate) {
-            $election = (object) ['id' => $election, 'name' => 'Sample Election'];
-            $candidate = (object) ['id' => $candidate, 'name' => 'Sample Candidate'];
-            $positions = collect();
-            $parties = collect();
-            return view('admin.candidates.edit', compact('election', 'candidate', 'positions', 'parties'));
-        })->name('candidates.edit');
-        
-        Route::put('/candidates/{candidate}', function($election, $candidate) {
-            return redirect()->route('admin.elections.candidates.index', $election)->with('success', 'Candidate updated successfully!');
-        })->name('candidates.update');
-        
-        Route::delete('/candidates/{candidate}', function($election, $candidate) {
-            return redirect()->route('admin.elections.candidates.index', $election)->with('success', 'Candidate deleted successfully!');
-        })->name('candidates.destroy');
-    });
+    Route::get('/candidates/create', function() {
+        $elections = collect();
+        $positions = collect();
+        $parties = collect();
+        return view('admin.candidates.create', compact('elections', 'positions', 'parties'));
+    })->name('candidates.create');
+    
+    Route::post('/candidates', function() {
+        return redirect()->route('admin.candidates.index')->with('success', 'Candidate created successfully!');
+    })->name('candidates.store');
+    
+    Route::get('/candidates/{candidate}', function($candidate) {
+        $candidate = (object) ['id' => $candidate, 'name' => 'Sample Candidate'];
+        return view('admin.candidates.show', compact('candidate'));
+    })->name('candidates.show');
+    
+    Route::get('/candidates/{candidate}/edit', function($candidate) {
+        $candidate = (object) ['id' => $candidate, 'name' => 'Sample Candidate'];
+        $elections = collect();
+        $positions = collect();
+        $parties = collect();
+        return view('admin.candidates.edit', compact('candidate', 'elections', 'positions', 'parties'));
+    })->name('candidates.edit');
+    
+    Route::put('/candidates/{candidate}', function($candidate) {
+        return redirect()->route('admin.candidates.index')->with('success', 'Candidate updated successfully!');
+    })->name('candidates.update');
+    
+    Route::delete('/candidates/{candidate}', function($candidate) {
+        return redirect()->route('admin.candidates.index')->with('success', 'Candidate deleted successfully!');
+    })->name('candidates.destroy');
 });
 
 // Student Routes
@@ -243,6 +252,7 @@ Route::middleware(['auth'])->prefix('student')->name('student.')->group(function
     Route::get('/', function () {
         return redirect()->route('student.dashboard');
     });
+    
     Route::get('/dashboard', function() {
         return view('student.dashboard');
     })->name('dashboard');
@@ -259,11 +269,4 @@ Route::middleware(['auth'])->prefix('student')->name('student.')->group(function
     Route::get('/vote/confirmation', function() {
         return view('student.vote-confirmation');
     })->name('vote.confirmation');
-});
-
-// Public Routes (accessible to all authenticated users)
-Route::middleware('auth')->group(function () {
-    // Profile routes can be added here
-    // Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    // Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
