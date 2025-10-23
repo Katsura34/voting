@@ -248,7 +248,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('admin.settings') }}" class="nav-link {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
                     <i class="bi bi-gear"></i>
                     Settings
                 </a>
@@ -280,7 +280,7 @@
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="me-2 text-end d-none d-sm-block">
                                 <small class="text-muted d-block">Welcome back,</small>
-                                <strong>{{ auth()->user()->first_name ?? 'Admin' }}</strong>
+                                <strong>{{ auth()->check() ? (auth()->user()->first_name ?? 'Admin') : 'Admin' }}</strong>
                             </div>
                             <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                 <i class="bi bi-person-fill text-white"></i>
@@ -288,7 +288,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.settings') }}"><i class="bi bi-gear me-2"></i>Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
